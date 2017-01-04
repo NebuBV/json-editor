@@ -37,13 +37,21 @@ JSONEditor.prototype = {
     // Fetch all external refs via ajax
     this._loadExternalRefs(this.schema, function() {
       self._getDefinitions(self.schema);
+	  
+	  //@nlac: gathering definitions from the external sources
+	  if (self.refs)
+		  for(var i in self.refs) {
+			  self._getDefinitions(self.refs[i]);
+		  }
       
       // Validator options
       var validator_options = {};
       if(self.options.custom_validators) {
         validator_options.custom_validators = self.options.custom_validators;
       }
-      self.validator = new JSONEditor.Validator(self,null,validator_options);
+      
+	  //@nlac: removed
+	  //self.validator = new JSONEditor.Validator(self,null,validator_options);
       
       // Create the root editor
       var editor_class = self.getEditorClass(self.schema);
@@ -53,7 +61,10 @@ JSONEditor.prototype = {
         required: true,
         container: self.root_container
       });
-      
+	  
+	  //@nlac: passing self.root.schema instead of null (to be able to use the resolved 'extend's)
+	  self.validator = new JSONEditor.Validator(self, self.root.schema, validator_options);
+	  
       self.root.preBuild();
       self.root.build();
       self.root.postBuild();
@@ -343,6 +354,9 @@ JSONEditor.prototype = {
     if(schema.$ref && typeof schema.$ref !== "object" && schema.$ref.substr(0,1) !== "#" && !this.refs[schema.$ref]) {
       refs[schema.$ref] = true;
     }
+	
+	//@nlac:
+	//this._getDefinitions(schema);
     
     for(var i in schema) {
       if(!schema.hasOwnProperty(i)) continue;
