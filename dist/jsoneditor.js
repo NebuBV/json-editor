@@ -600,7 +600,7 @@ JSONEditor.prototype = {
       waiting++;
 
       var r = new XMLHttpRequest(); 
-      r.open("GET", url, true);
+      r.open("GET", self.options.transformUrls ? self.options.transformUrls(url) : url, true);//@nlac: added transformUrls
       r.onreadystatechange = function () {
         if (r.readyState != 4) return; 
         // Request succeeded
@@ -3173,7 +3173,8 @@ JSONEditor.defaults.editors.object = JSONEditor.AbstractEditor.extend({
       }
       // Otherwise, remove value unless this is the initial set or it's required
       else if(!initial && !self.isRequired(editor)) {
-        self.removeObjectProperty(i);
+		if (!self.schema.defaultProperties || self.schema.defaultProperties.indexOf(i)<0) //@nlac: added, to make defaultProperties work as it supposed
+			self.removeObjectProperty(i);
       }
       // Otherwise, set the value to the default
       else {
@@ -8056,7 +8057,7 @@ JSONEditor.defaults.resolvers.unshift(function(schema) {
   }
 })();
 
-  window.JSONEditor = JSONEditor;
+  window.JDornJSONEditor = JSONEditor;
 })();
 
 //# sourceMappingURL=jsoneditor.js.map

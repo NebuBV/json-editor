@@ -387,7 +387,7 @@ JSONEditor.prototype = {
       waiting++;
 
       var r = new XMLHttpRequest(); 
-      r.open("GET", url, true);
+      r.open("GET", self.options.transformUrls ? self.options.transformUrls(url) : url, true);//@nlac: added transformUrls
       r.onreadystatechange = function () {
         if (r.readyState != 4) return; 
         // Request succeeded
